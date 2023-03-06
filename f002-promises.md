@@ -145,3 +145,17 @@ For now, all that matters is that every "fulfilled" promise contains a value.
 Promise.resolve(5); //-> {fulfilled: 5} <- This is how Execute Program formats fulfilled promises.
 ```
 
+Here's another example:
+
+```js
+const array = [];
+array.push('before');
+
+const promise1 = Promise.resolve('this value is ignored');
+const promise2 = promise1
+  .then(() => array.push('then'))
+  .then(() => array.push('after'))
+  .then(() => array)
+
+promise2; //-> {<fulfilled>: ['before', 'then', 'after']}
+```
