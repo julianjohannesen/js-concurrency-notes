@@ -1,5 +1,7 @@
 # Timers
 
+## setTimeout
+
 A simple example using setTimeout(callback, time):
 
 ```js
@@ -78,3 +80,36 @@ setTimeout(() => console.log('cat'), 1000);
 //-> 'dog'
  ```
 
+Here's a simplified approach to representing the timer queue:
+
+```js
+while (true) {
+  for (const timer of eventQueue) {
+    if (timer.isPastItsScheduledTime()) {
+      timer.runCallback();
+      eventQueue.removeTimer(timer);
+    }
+  }
+}
+```
+
+## clearTimeout()
+
+In browsers, setTimeout always returns a number, which is the ID of the timer. NodeJS behaves a bit differently: there, setTimeout returns an object. In both cases, we can pass setTimeout's return value to clearTimeout, which will cancel the timer. We just have to remember to store setTimeout's return value in a variable.
+
+```js
+const array = [];
+const timer = setTimeout(() => { array.push('timer'); }, 1000);
+clearTimeout(timer);
+// The timer never runs
+array; //-> []
+```
+
+What if we call clearTimeout on a timer that has already fired? There's no longer a timer to clear, so it silently does nothing.
+
+clearTimeout doesn't mind if we pass in something that's not a timer. For example, calling it with undefined won't throw an exception.
+
+```js
+clearTimeout(['not', 'a', 'timer']); //-> undefined
+clearTimeout(undefined); //-> undefined
+```
