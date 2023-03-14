@@ -151,7 +151,7 @@ For now, all that matters is that every "fulfilled" promise contains a value.
 Promise.resolve(5); //-> {fulfilled: 5} <- This is how Execute Program formats fulfilled promises.
 ```
 
-Here's another example. Notice in this example that we must return the array from the promise to add the new members to 'array.' Returning the array required that we add then(()=>array) as the last thenable statement.
+Here's another example. In this example, **the array is altered whether it's returned from the promise or not. But the array won't be contained in the PromiseResult in Chrome's inspection tools unless the array is returned from the promise.**
 
 ```js
 const array = [];
@@ -161,12 +161,14 @@ const promise1 = Promise.resolve('this value is ignored');
 const promise2 = promise1
   .then(() => array.push('then'))
   .then(() => array.push('after'))
+  // Here's where the array is returned, so we'll see it in PromiseResult
+  // in Chrome's inspection tools
   .then(() => array)
 
 promise2; //-> {<fulfilled>: ['before', 'then', 'after']}
 ```
 
-We could have returned 'this value is ignored' if we had wanted to like this:
+We could have added 'this value is ignored' to the array if we had wanted to like this:
 
 ```js
 const array = [];
@@ -179,5 +181,67 @@ const promise2 = promise1
 promise2; //-> {<fulfilled>: ['before', 'this value will NOT be ignored']}
 ```
 
-In this case, we didn't have to explicitly return the array from the promise, because the value that was added to the array was passed into the callback as 'x'. That value came from Promise.resolve(myValue).
+In the case above, we see that the array is altered, even though we don't return the array, but because we haven't returned it, the PromiseResult in Chrome's inspection tools is 2, not the array and its members.
 
+Here's a simpler example of altering an array to add the value contained in Promise.resolve():
+
+```js
+const array = [];
+const promise1 = Promise.resolve(50)
+    // Notice 'n'
+    .then(n=>array.push(n));
+// The array is altered...
+array; //-> [50]
+// But when we inspect PromiseResult, we see undefined
+promise1 //-> {<fulfilled>: undefined}
+```
+
+This is what promise1 looks like in the console in Chrome:
+
+```json
+Promise {<fulfilled>: undefined}
+    [[Prototype]]: Promise
+    [[PromiseState]]: "fulfilled"
+    [[PromiseResult]]: undefined
+```
+
+Compare this to:
+
+```js
+const array = [];
+const promise1 = Promise.resolve(50)
+    .then(n=>{array.push(n)})
+    // We return the array from the promise
+    .then(()=>array)
+// The array is altered...
+array; //-> [50]
+// and we see the result in the promise
+promise1 //-> {fulfilled: Array(1)}
+```
+
+This is what promise1 looks like in the console in Chrome:
+
+```json
+Promise {<fulfilled>: Array(1)}
+    [[Prototype]]: Promise
+    [[PromiseState]]: "fulfilled"
+    [[PromiseResult]]: Array(1)
+        0: 50
+        length: 1
+        [[Prototype]]: Array(0)
+```
+
+And putting it all together.
+
+```js
+const array = [];
+array.push('before');
+const myValue = 'this value will NOT be ignored';
+const promise1 = Promise.resolve(myValue);
+const promise2 = promise1
+  .then((x) => array.push(x))
+  .then(() => array.push('after'))
+  .then(() => array)
+array
+promise2;
+```
