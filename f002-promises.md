@@ -241,7 +241,7 @@ const promise1 = Promise.resolve(myValue);
 const promise2 = promise1
   .then((x) => array.push(x))
   .then(() => array.push('after'))
-  .then(() => array)
-array
-promise2;
+  .then(() => array);
+array; //-> ['before', 'this value will NOT be ignored', 'after']
+promise2; //-> {<fulfilled>: Array(3)}
 ```
