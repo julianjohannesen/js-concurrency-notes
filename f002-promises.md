@@ -1,12 +1,16 @@
 # Promises
 
+## What Are Promises?
+
 MDN describes a promise as the eventual completion or failure of an asynchronous operation and its resulting value. Promises allow us to treat asynchronous values the same we treat synchronous ones, but instead of using a value itself, we use a promise that that value will eventually by resolved. So, for example, Promises allow us to associate handlers with an asynchronous operation and its eventual value.
 
 If we didn't have Promises, we'd have to use a series of callback functions to manage asynchronous operations, leading to something known as callback hell.
 
-Execute Program illustrates callback hell with a series of nested setTimeout() calls, each callback calling another callback. These sequential setTimeouts() become difficult to read and debug as we add more steps.
+[Execute Program](https://www.executeprogram.com/) illustrates callback hell with a series of nested setTimeout() calls, each callback calling another callback. These sequential setTimeouts() become difficult to read and debug as we add more steps.
 
-Execute Program bootstraps us to Promises by walking us through an exercise in which we can imagine a function that automatically waits for the previous timer to finish, before calling a subsequent timer.
+## Building a Synchronous Promise API
+
+Execute Program [bootstraps us to Promises](https://www.executeprogram.com/courses/javascript-concurrency/lessons/promise-then) by walking us through an exercise in which we can imagine a function that automatically waits for the previous timer to finish, before calling a subsequent timer.
 
 ```js
 // this is pseudo code
@@ -117,6 +121,8 @@ chain(5)
 
 This shows us the basic interface of promises: there's a way to create an object containing a value, and there's a way to add then callbacks that return new values.
 
+## Real Promises
+
 Now we can switch to real promises, where the equivalent of chain(someValue) is **Promise.resolve(someValue)**
 
 For now, **you can think of Promise.resolve as "create a promise that contains the given value"**
@@ -145,7 +151,7 @@ For now, all that matters is that every "fulfilled" promise contains a value.
 Promise.resolve(5); //-> {fulfilled: 5} <- This is how Execute Program formats fulfilled promises.
 ```
 
-Here's another example:
+Here's another example. Notice in this example that we must return the array from the promise to add the new members to 'array.' Returning the array required that we add then(()=>array) as the last thenable statement.
 
 ```js
 const array = [];
@@ -159,3 +165,19 @@ const promise2 = promise1
 
 promise2; //-> {<fulfilled>: ['before', 'then', 'after']}
 ```
+
+We could have returned 'this value is ignored' if we had wanted to like this:
+
+```js
+const array = [];
+array.push('before');
+const myValue = 'this value will NOT be ignored'
+const promise1 = Promise.resolve(myValue);
+const promise2 = promise1
+  .then((x) => array.push(x))
+
+promise2; //-> {<fulfilled>: ['before', 'this value will NOT be ignored']}
+```
+
+In this case, we didn't have to explicitly return the array from the promise, because the value that was added to the array was passed into the callback as 'x'. That value came from Promise.resolve(myValue).
+
