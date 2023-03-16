@@ -1,4 +1,4 @@
-
+/*
 const arr = [];
 arr.push('before');
 const promise1 = Promise.resolve('this value is ignored');
@@ -40,4 +40,16 @@ const promise1b = Promise.resolve(myValue);
 const promise2b = promise1b
     .then(x=>arr4.push(x));
 promise2b;
+*/
 
+console.log('before');
+
+const resolver = resolve => setTimeout(resolve, 1000);
+const log1 = ()=>console.log('first then');
+const log2 = ()=>console.log('second then');
+
+new Promise(resolver)
+    .then(log1)
+    .then(log2);
+
+console.log('after');

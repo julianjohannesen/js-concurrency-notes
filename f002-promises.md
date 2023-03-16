@@ -245,3 +245,18 @@ const promise2 = promise1
 array; //-> ['before', 'this value will NOT be ignored', 'after']
 promise2; //-> {<fulfilled>: Array(3)}
 ```
+
+One more example of how returning a value from a promise affects the promise and makes the promise value available outside of the promise. In this case we return the number 5 from the Promise. As a result, we can see that the Promise is fulfilled with value 5. That value also shows up when we inspect the code in Chrome.
+
+```js
+Promise.resolve().then(() => 5); //-> {<fulfilled>: 5}
+```
+
+Inspecting it in Chrome:
+
+```json
+Promise {<fulfilled>: 5}
+    [[Prototype]]: Promise
+    [[PromiseState]]: "fulfilled"
+    [[PromiseResult]]: 5
+```
