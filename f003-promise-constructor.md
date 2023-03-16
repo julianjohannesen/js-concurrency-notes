@@ -58,3 +58,30 @@ new Promise((resolve, reject) => reject(new Error('it failed')));
 //-> ASYNC RESULT: {rejected: 'Error: it failed'}
 ```
 
+Another example:
+
+```js
+const users = [
+  {id: 1, name: 'Amir'},
+  {id: 2, name: 'Betty'},
+];
+
+function getUser(id) {
+  return new Promise((resolve, reject) => {
+    const user = users.find(user => user.id === id);
+    if (user) {
+      resolve(user);
+    } else {
+      reject(new Error('no such user'));
+    }
+  });
+}
+```
+
+## Promise.resolve() and new Promise(resolve=>myFunc(resolve)) aren't the same thing
+
+One important thing to keep in mind: the resolve function that we get from the constructor is separate from the Promise.resolve method. And the reject function here is separate from the Promise.reject method.
+
+You can think of Promise.resolve and Promise.reject as the simpler versions: when we call Promise.resolve(5), we're creating a new promise that's **immediately fulfilled** with the value 5. We don't need to pass in a callback function, but the trade-off is that **there's also no way for us to delay resolution**.
+
+The promise constructor is the more complex version: **when we do new Promise(resolve => ...), we can delay our call to resolve**. We can even save the resolve function and call it from another part of the system, which we'll see in a future lesson.
