@@ -1,2 +1,3 @@
-# js-concurrency-notes
+# JavaScript Concurrency Notes
+
 Some notes on concurrency in JavaScript.
