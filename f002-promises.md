@@ -139,15 +139,16 @@ Promise.resolve(5); //-> Promise {<fulfilled>: 5}
 ```
 
 The "fulfilled" part means that the promise actually contains a value.
-Later, we'll see promises that are waiting for something else to happen ("pending") and promises where something has gone wrong ("rejected")
 
-Promises can be **fulfilled**, **pending**, or **rejected**.
+### Pending, Settled, Fulfilled, and Rejected Promsises
 
-For now, all that matters is that every "fulfilled" promise contains a value.
+There are promises that are waiting for something else to happen ("pending") and promises where something has gone wrong ("rejected"). If a promise is not pending, then it's "settled." So, settled promises can either be fulfilled or rejected. For now, all that matters is that every "fulfilled" promise contains a value.
 
 ```js
-Promise.resolve(5); //-> {fulfilled: 5} <- This is how Execute Program formats fulfilled promises.
+Promise.resolve(5); //-> {<fulfilled>: 5}
 ```
+
+Note that the way Execute Program notates pending and settled promises is not exactly the way your browser might notate pending and settled promises.
 
 Here's another example. In this example, **the array is altered whether it's returned from the promise or not. But the array won't be contained in the PromiseResult in Chrome's inspection tools unless the array is returned from the promise.**
 
