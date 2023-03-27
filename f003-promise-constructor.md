@@ -1,79 +1,84 @@
 # Promise constructor
 
-## Why we need Promise Constructors: Losing Composability When Calling a Promise Inside of a setTimeout()
+## Why we need Promise Constructors
+
+So far, we've looked at Promise.resolve(). However, there's a big problem with Promise.resolve() - when we use it, we lose composability - the ability to chain then statements one after another - in certain situations.
 
 ```js
-function logIt(){console.log('then is running')}
-function callback() {Promise.resolve().then(logIt)}
+function callback() {Promise.resolve().then(console.log('then is running'))}
 function runInOneSecond() {setTimeout(callback, 1000)}
 
 console.log('before');
 runInOneSecond();
 console.log('after');
-
-//  We successfully delayed the promise execution
-//  22 ms  before
-//  22 ms  after
-//1024 ms  then is running
-//  However, runInOneSection().then(whatever) won't work,
-//  because the promise resolves inside of setTimeout()
 ```
 
-This approach successfully delayed the promise execution, but we still have a problem.
+The console will log "before," followed by "after," followed 1 second later by "then is running." This approach successfully delayed the promise execution, but we still have a problem.
 
-When runInOneSecond starts to run, it sets a timer, but doesn't create the promise. Then, at the 1000 ms mark, the timer fires. **Only when the timer fires is the promise created and immediately resolved. The promise resolves inside the setTimeout, so our runInOneSecond function can't return it. If runInOneSecond doesn't return a promise, then runInOneSecond().then(...) won't work. We've lost composability**, one of the biggest benefits of promises.
+When runInOneSecond starts to run, it sets a timer, but doesn't create the promise. Then, at the 1000 ms mark, the timer fires. **Only when the timer fires is the promise created and immediately resolved. The promise resolves inside the setTimeout, so our runInOneSecond function can't return it. If runInOneSecond doesn't return a promise, then runInOneSecond().then(...) won't work. We've lost composability**, and composability is one of the biggest benefits of promises.
 
-Below, I'm trying to save the promise in the variable 'blah' and return it from the callback. The outcome is that the message is logged when it should be, but if you try to access 'blah', you can see that it's fulfilled but undefined. We can add a then statement to blah, but all it does is show us that the value is undefined. **But none of that is really the point.** The point is that there's no way to return the promise from runInOneSecond().
+If we attempt to store the promise result in a variable called promise1, all we'll see when we inspect promise1 is that the promise was fulfilled and its value is undefined. It makes no difference whether we explicitly attempt to return promise1 from callback and runInOneSecond.
 
 ```js
-let blah;
-function logIt(){console.log('then is running')}
+let promise1;
 function callback() {
-  blah = Promise.resolve().then(logIt);
-  return blah;
+  promise1 = Promise.resolve().then(console.log('then is running'));
 }
-function runInOneSecond() {setTimeout(callback, 1000)}
+function runInOneSecond() {
+  setTimeout(callback, 1000)
+}
 
 console.log('before');
 runInOneSecond();
 console.log('after');
 
-blah; 
-//Promise {<fulfilled>: undefined}
+promise1; 
+//-> Promise {<fulfilled>: undefined}
 //  [[Prototype]]: Promise
 //  [[PromiseState]]: "fulfilled"
 //  [[PromiseResult]]: undefined
 
-blah.then(x=>console.log("this is x: ", x)); //-> this is x:  undefined
+promise1.then(x=>console.log("this is x: ", x)); //-> this is x:  undefined
 ```
 
-We can fix this by using the **Promise constructor: new Promise()**. Here's a really simple example.
+## The Promise Constructor
+
+We can overcome this limitation by using the Promise constructor, which has the general form:
 
 ```js
-function ourCallback(resolve) { resolve(5) }
-new Promise(ourCallback); //ASYNC RESULT: {fulfilled: 5}
-
-// The above lines are usually written with the function inlined like this:
-new Promise(resolve=>resolve(5)); //-> {fulfilled: 5}
+new Promise(callback)
 ```
 
-Below is another example where we pass resolve() into a callback. The callback calls resolve() within a setTimeout(), after 1 second. Then we pass a callback to then(). The callback logs a message to the console. Then a second callback to another then() that logs something else to the console.
+In the example below, notice the callback function's "resolve" parameter. The Promise constructor expects that its callback will take that parameter. It doesn't matter what we call it. We could call it "x" and it would work the same way. What matters is that its the first parameter in the callback.
+
+Inside the callback's body, we can use resolve() to return a promise that contains a value.
+
+```js
+function callback(resolve) { 
+  return resolve(5);
+}
+new Promise(callback); //-> {<fulfilled>: 5}
+
+// The above lines are usually written with the callback function inlined like this:
+new Promise(resolve=>resolve(5));
+// And we could write that like this, if we were of a mind to
+new Promise(x=>x(5))
+```
+
+Below is an example in which we add an asynchronous setTimeout() to the constructor's callback's body and then call resolve() within the setTimeout(). We also add then statements to the promise that's returned by the Promise constructor.
 
 ```js
 console.log('before');
 
 new Promise(resolve => setTimeout(resolve, 1000))
-    // and now we can add then statements!
+    // Now we can add then statements and they work!
     .then(() => console.log('first then is running'))
     .then(() => console.log('second then is running')); 
 
 console.log('after');
-
-//  7 ms  before
-//  8 ms  after
-//  1014 ms  first then is running
-//  1015 ms  second then is running
 ```
+
+The console logs "before," followed by "after," followed 1 second later by "first then is running," and then "second then is running."
 
 ## Rejections with the Promise Constructor
 

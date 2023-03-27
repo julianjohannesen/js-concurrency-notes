@@ -136,25 +136,24 @@ The initial Promise.resolve call returns a promise, and each of the then calls a
 
 ```js
 Promise.resolve(5); //-> Promise {<fulfilled>: 5}
+// Note that the way Execute Program notates pending and settled promises is not exactly the way your browser's inspection tools might notate pending and settled promises. I'm generally using Chrome's notation.
 ```
 
 The "fulfilled" part means that the promise actually contains a value.
+
+<hr>
 
 ### Pending, Settled, Fulfilled, and Rejected Promises
 
 There are promises that are waiting for something else to happen ("pending") and promises where something has gone wrong ("rejected"). If a promise is not pending, then it's "settled." So, settled promises can either be fulfilled or rejected. For now, all that matters is that every "fulfilled" promise contains a value.
 
-```js
-Promise.resolve(5); //-> {<fulfilled>: 5}
-```
-
-Note that the way Execute Program notates pending and settled promises is not exactly the way your browser might notate pending and settled promises.
+<hr>
 
 Here's another example using Promise.resolve().
 
 Note that we're storing the result of Promise.resolve() in a variable (promise1), so that we can inspect it later. We're also storing the result of our then statements (promise2).
 
-Tip: Note also that **the array is altered whether it's returned from the promise or not. But the array won't be contained in the PromiseResult in, say, Chrome's inspection tools unless the array is returned from the promise.**
+**Tip: Note also that the array is altered whether it's returned from the promise or not. But the array won't be contained in the PromiseResult in, say, Chrome's inspection tools unless the array is returned from the promise.**
 
 ```js
 const array = [];
@@ -207,7 +206,7 @@ Promise {<fulfilled>: 1}
     [[PromiseResult]]: 1
 ```
 
-Tip: Remember to notice your return statements. Compare the above example to this one:
+**Tip: Remember to notice your return statements. Compare the above example to this one:**
 
 ```js
 const array = [];
