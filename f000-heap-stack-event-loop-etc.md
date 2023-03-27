@@ -36,6 +36,8 @@ The V8 runtime manages the heap and stack, but the runtime is not what enables v
 
 If JS is single-threaded, how does it handle asynchronous functions? It uses a callback queue and an event loop. When an async function is added to the top of the call stack, it's diverted to the callback queue. Whenever the call stack is empty, the event loop takes an item from the callback queue and adds it back to the call stack. This is difficult to understand without animating the process. Philip does a great job of that in his talk at around the [13 minute mark](https://www.youtube.com/watch?v=8aGhZQkoFbQ&list=PLe_XhrA8jJwoRZA3GqD9K9MXZWFIgULLY&index=5&t=45s). Lydia Hallie has also created [a series of animated gifs](https://dev.to/lydiahallie/javascript-visualized-event-loop-3dif) to illustrate the process.
 
-[call stack 1](/images/callstack.gif)!
-
-
+![call stack 1](images/callstack.gif)
+![call stack 2](images/callstack2.gif)
+![call stack 3](images/callstack3.gif)
+![call stack 4](images/callstack4.gif)
+![call stack 5](images/callstack5.gif)
