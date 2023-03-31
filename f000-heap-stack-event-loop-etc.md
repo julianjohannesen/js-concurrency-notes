@@ -2,6 +2,12 @@
 
 ### Notes from Philip Roberts' talk "What is the event loop anyway?", JSConfEU 2014
 
+## Resources:
+
+- [MDN on this subject](https://developer.mozilla.org/en-US/docs/Web/API/HTML_DOM_API/Microtask_guide/In_depth)
+- ["What is the Event Loop Anyway"](https://youtu.be/8aGhZQkoFbQ)
+- [Lydia Hallie's JavaScript Visualized: The Event Loop](https://dev.to/lydiahallie/javascript-visualized-event-loop-3dif)
+
 ## The Heap and the Call Stack
 
 Philip starts with the heap and the stack. They seem to be counterparts in some way.
