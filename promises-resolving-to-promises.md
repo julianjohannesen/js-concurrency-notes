@@ -54,3 +54,24 @@ promise1.then(n1 => promise2.then(n2 => n1 + n2));
 //-> {fulfilled: 16}
 ```
 
+In this example, a setTimeout is used inside a then statement. This wouldn't work, if promises couldn't resolve promises.
+
+```js
+Promise.resolve(
+
+).then(
+    ()=>console.log('first then')
+).then(
+    ()=>{
+        console.log('second then');
+        return new Promise(resolve=>setTimeout(resolve, 1000));
+    }
+).then(
+    ()=>console.log('third then')
+);
+
+//-> 'first then'
+//-> 'second then'
+//-> Promise {<pending>}
+//-> 'third then'
+```
