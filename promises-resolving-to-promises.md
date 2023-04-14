@@ -1,9 +1,10 @@
 # Promises Resolving to Promises
 
+## Promises can be resolved with other promises
 
-## Promises that are resolved with other promises are flattened
+**Promises can be resolved with other promises**. This is important. If they couldn't we'd have a real problem when dealing with things like network requests, writes and reads to and from disks, setTimeouts, etc. All of those things compose nicely with promises that resolve to promises.
 
-Promises can be resolved with other promises. For example:
+Here's an example of a promise resolving another promise:
 
 ```js
 const promise1 = Promise.resolve(5);
@@ -11,7 +12,9 @@ const promise2 = Promise.resolve(promise1);
 promise2 //-> {<fulfilled>: 5}
 ```
 
-You might have thought that promise2 would resolve to something like {<fulfilled>: <fulfilled>:5}, but that's not how JavaScript works. There's no such thing as a nested promise result. **When a promise resolves another promise, the promises are flattened.** In this case, when promise1 fulfills, promise2 also fulfills to the same value.
+## Promises get flattened!
+
+You might have thought that promise2 would resolve to something like {\<fulfilled\>: \<fulfilled\>:5}, but that's not how JavaScript works. There's no such thing as a nested promise result. **When a promise resolves another promise, the promises are flattened.** In this case, when promise1 fulfills, promise2 also fulfills to the same value.
 
 ---
 ### Note on Promise.resolve()
@@ -26,7 +29,9 @@ promise2 //-> {rejected: 'Error: Error!'}
 
 ---
 
-We can resolve with a promise via (a) Promise.resolve or the (b) new Promise constructor or a (3) then statement. In each case, resolving a promise with a promise works the same way. For example:
+## We can resolve promises in at least 3 ways
+
+We can resolve with a promise via (a) Promise.resolve or (b) the new Promise constructor or via (3) a then statement. In each case, resolving a promise with a promise works the same way. For example:
 
 ```js
 const promise1 = Promise.resolve(5);
@@ -35,7 +40,11 @@ const promise3 = promise2.then(n=>n*2);
 promise3 //-> {fulfilled: 10}
 ```
 
+## A promise can include a long chain of then statements
+
 One consequence of how JS flattens promises is that **a then statement can contain a long chain of other then statements. Regardless of how long the chain is, it will be flattened when the promise resolves**.
+
+In this example, the then statement in promise1 takes a promise from Promise.resolve() and uses its promised result to perform an arithmetic operation. Later on, another then statement is attached to promise1, however this new then statement contains promised results from both promise1 and promise2. The new then statement will wait as long as it needs to get those promised results from promise1 and promise2, and then it will perform its own operation on those results.
 
 ```js
 const promise1 = Promise.resolve(5).then(n => n + 1);
