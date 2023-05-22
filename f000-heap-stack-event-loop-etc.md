@@ -2,11 +2,13 @@
 
 ### Notes from Philip Roberts' talk "What is the event loop anyway?", JSConfEU 2014
 
+In order to understand concurrency, we also need to understand something about how JavaScript works, especially the way in which the execution stack, event loop, and callback queue interact.
+
 ## Resources:
 
-- [MDN on this subject](https://developer.mozilla.org/en-US/docs/Web/API/HTML_DOM_API/Microtask_guide/In_depth)
 - ["What is the Event Loop Anyway"](https://youtu.be/8aGhZQkoFbQ)
 - [Lydia Hallie's JavaScript Visualized: The Event Loop](https://dev.to/lydiahallie/javascript-visualized-event-loop-3dif)
+- [MDN on this subject](https://developer.mozilla.org/en-US/docs/Web/API/HTML_DOM_API/Microtask_guide/In_depth)
 
 ## The Heap and the Call Stack
 
@@ -14,7 +16,9 @@ Philip starts with the heap and the stack. They seem to be counterparts in some 
 
 The **heap** is where memory allocation occurs. That's about all that's said about it in Philip's talk.
 
-The **call stack** is a data structure that records where in a program we are. Picture a stack of pancakes. The first pancake added to the stack is the last pancake to get eaten. First in, last out. When we call a function, we push that function onto the top of the stack. When that function returns, it is popped off the top of the stack. But what if our function calls other functions? Those functions will also be added to the call stack, on top of the function that called them. That becomes clearer below.
+### The call stack
+
+The **call stack** is a data structure that records where in a program we are. Picture a stack of pancakes. The first pancake added to the stack is the last pancake to get eaten. **First in, last out**. Similarly, when we call a function, we push that function onto the top of the stack. When that function returns, it is popped off the top of the stack. But what if our function calls other functions? Those functions will also be added to the call stack, on top of the function that called them. That becomes clearer below.
 
 ```js
 // Pseudo code
@@ -42,17 +46,25 @@ Here's what's happening:
 
 How does the runtime know that a function has completed? Reaching a return statement signals that a function is complete. But even without an explicit return statement, the runtime can figure out that a function has completed.
 
+### Blocking code and freezing
+
 The stack is important in understanding the concept of "**blocking code**." JS can only perform one task at a time (it's a "**single threaded**" language). What that means is that if a function takes a while to execute, nothing else can happen until that function completes its execution. You can imagine a slow running function sitting on the top of the stack, waiting to complete, so that it can be popped off, and the runtime can return to the function below it. In a browser, that can lead to the UI freezing while a function executes.
+
+### Blowing the stack
 
 The stack does not have infinite capacity. You may have heard of "**blowing the stack**." That occurs when you recursively invoke a function forever. Eventually, the stack runs out of room to add more functions - that's "blowing the stack."
 
-When we inspect an error in the console, the call stack allows us to view a history the functions that were called that led to our error. This is called a "**stack trace**."
+### Stack Trace
 
-The V8 runtime manages the heap and stack, but the runtime is not what enables various APIs, not even simple things like setTimeout. Where do these things come from then? These APIs are implemented by the browser.
+When we inspect an error in the console, the call stack allows us to view a history of the functions that were called that led to our error. This is called a "**stack trace**."
+
+### Web APIs are implemented by the browswer, not by the JavaScript runtime
+
+The V8 **runtime** manages the heap and stack, but the runtime is not what enables various APIs, not even simple things like setTimeout. Where do these things come from then? These APIs are implemented by the browser.
 
 ## The Callback Queue and the Event Loop
 
-If JS is single-threaded, how does it handle asynchronous functions like callbacks and setTimeout()? It uses a callback queue and an event loop. When an async function is added to the top of the call stack, an appropriate web API will divert it to the callback queue. Whenever the call stack is empty, the event loop takes the first item that was added to the callback queue and adds it back to the call stack. This is difficult to understand without animating the process. Philip does a great job of that in his talk at around the [13 minute mark](https://www.youtube.com/watch?v=8aGhZQkoFbQ&list=PLe_XhrA8jJwoRZA3GqD9K9MXZWFIgULLY&index=5&t=45s). Basically, the whole last 10 minutes of his talk is an animation and demonstration of this process. Lydia Hallie has also created [a series of animated gifs](https://dev.to/lydiahallie/javascript-visualized-event-loop-3dif) to illustrate the process.
+If JS is single-threaded, how does it handle asynchronous functions like callbacks and setTimeout()? It uses a callback queue and an event loop. **When an async function is added to the top of the call stack, an appropriate web API will divert it to the callback queue**. **Whenever the call stack is empty, the event loop takes the first item that was added to the callback queue and adds it back to the call stack**. This is difficult to understand without animating the process. Philip does a great job of that in his talk at around the [13 minute mark](https://www.youtube.com/watch?v=8aGhZQkoFbQ&list=PLe_XhrA8jJwoRZA3GqD9K9MXZWFIgULLY&index=5&t=45s). Basically, the whole last 10 minutes of his talk is an animation and demonstration of this process. Lydia Hallie has also created [a series of animated gifs](https://dev.to/lydiahallie/javascript-visualized-event-loop-3dif) to illustrate the process.
 
 ![call stack 1](images/callstack.gif)
 ![call stack 2](images/callstack2.gif)

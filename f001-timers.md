@@ -2,6 +2,8 @@
 
 ## setTimeout
 
+The setTimeout function allows us to set a timer that will trigger a call to a function that we provide when the timer reaches zero. 
+
 A simple example using setTimeout(callback, time):
 
 ```js
@@ -14,7 +16,7 @@ console.log('third');
 //-> 'second'
 ```
 
-Notice that even if the time is set to 0, using a timer at all means the callback does not execute until all of the other, concurrent code in the script has run:
+**Notice that even if the time is set to 0, using a timer at all means the callback does not execute until all of the other, concurrent code in the script has run**:
 
 ```js
 console.log('first');
