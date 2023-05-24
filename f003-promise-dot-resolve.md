@@ -1,4 +1,4 @@
-## Real Promises and Promise.resolve()
+# Real Promises and Promise.resolve()
 
 Now we can switch to real promises, where the equivalent of chain(someValue) is **Promise.resolve(someValue)**
 
