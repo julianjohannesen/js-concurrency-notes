@@ -21,7 +21,9 @@ console.log('after');
 //-> 'then2'
 ```
 
-What we're seeing here is that the concurrent code runs before the code contained in the then statements. This fact isn't obvious when you consider a promise on its own.
+What we're seeing here is that the concurrent code runs before the code contained in the then statements. The code in the then statements is picked out of the call stack and placed in the callback queue, and it only runs after all of the concurrent code has finished running. 
+
+This fact isn't obvious when you consider a promise on its own.
 
 ```js
 const array = [];
