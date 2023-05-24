@@ -2,9 +2,9 @@
 
 ## What Are Promises?
 
-MDN describes a promise as the eventual completion or failure of an asynchronous operation and its resulting value. Promises allow us to deal with asynchronous values the same we deal with synchronous ones, but instead of using a value itself, we use a promise that the value will eventually by resolved. So, for example, Promises allow us to associate handlers with an asynchronous operation and its eventual value.
+MDN describes a promise as **the eventual completion or failure of an asynchronous operation and its resulting value**. Promises allow us to deal with asynchronous values the same we deal with synchronous ones, but instead of using a value itself, we use a promise that the value will eventually by resolved. So, for example, Promises allow us to associate handlers with an asynchronous operation and its eventual value.
 
-If we didn't have Promises, we'd have to use a series of nested callback functions to manage asynchronous operations, leading to something known as callback hell. ([Execute Program](https://www.executeprogram.com/) illustrates callback hell with a series of nested setTimeout() calls, each callback calling another callback. These sequential setTimeouts() become difficult to read and debug as we add more steps.)
+If we didn't have Promises, we'd have to use a series of nested callback functions to manage asynchronous operations, leading to something known as **callback hell**. ([Execute Program](https://www.executeprogram.com/) illustrates callback hell with a series of nested setTimeout() calls, each callback calling another callback. These sequential setTimeouts() become difficult to read and debug as we add more steps.)
 
 ## Why do we need promises?
 
@@ -96,7 +96,7 @@ chain(5)
 .then(n => n * 3); //->15
 ```
 
-Our problem now is that we can only add a single then call to chain. We aren't yet able to call chain(5).then(...).then(...). To overcome this obstacle, we need change then's return value. **Instead of returning a value like 5 directly, we wrap the return value in a new chain**. Now the chain function lives up to its name: when we call then(), we get a new chain, and we can call then() on that, which gives us a new chain, etc. When we're done, we access .value
+Our problem now is that we can only add a single then call to chain. We aren't yet able to call chain(5).then(...).then(...). To overcome this obstacle, we need to change then's return value. **Instead of returning a value like 5 directly, we wrap the return value in a new chain**. Now the chain function lives up to its name: when we call then(), we get a new chain, and we can call then() on that, which gives us a new chain, etc., recursively. When we're done, we access .value
 
 ```js
 function chain(value) {
@@ -117,7 +117,7 @@ chain(5).then(n=>n*2).then(n=>n+4).value //-> 14
 
 That's it. We now have a simplified, synchronous representation of the Promise API.
 
-This shows us the basic interface of promises: there's a way to create an object containing a value, and there's a way to add then callbacks that return new values.
+This shows us the basic interface of promises: there's a way to create an object containing a value, and there's a way to add then callbacks that return new values, and there's a way to chain those then calls together indefinitely.
 
 ## Real Promises
 
@@ -159,14 +159,14 @@ Note that we're storing the result of Promise.resolve() in a variable (promise1)
 const array = [];
 array.push('before');
 
-const promise1 = Promise.resolve('this value is ignored');
+const promise1 = Promise.resolve('this value is ignored in promise2');
 const promise2 = promise1
   .then(() => array.push('then'))
   .then(() => array.push('after'))
   // Here's where the array is returned, so we'll see it in PromiseResult in Chrome's inspection tools
   .then(() => array)
 
-promise1; //-> {<fulfilled>: 'this value is ignored'}
+promise1; //-> {<fulfilled>: 'this value is ignored in promise2'}
 promise2; //-> {<fulfilled>: ['before', 'then', 'after']}
 ```
 
@@ -216,6 +216,7 @@ const promise1 = Promise.resolve(50)
         array.push(n)
     })
 array; //-> [50]
+// If you don't explicitly return something from the then statement, it will return undefined.
 promise1 //-> {fulfilled: undefined}
 ```
 

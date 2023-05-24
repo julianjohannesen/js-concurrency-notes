@@ -107,7 +107,11 @@ clearTimeout(timer);
 array; //-> []
 ```
 
+### clearTimeout fails silently when the timer had already gone off
+
 What if we call clearTimeout on a timer that has already fired? There's no longer a timer to clear, so it silently does nothing.
+
+### clearTimeout fails silently when you pass it a fake timer 
 
 clearTimeout doesn't mind if we pass in something that's not a timer. For example, calling it with undefined won't throw an exception.
 
