@@ -119,3 +119,20 @@ clearTimeout doesn't mind if we pass in something that's not a timer. For exampl
 clearTimeout(['not', 'a', 'timer']); //-> undefined
 clearTimeout(undefined); //-> undefined
 ```
+
+## setInterval() and clearInterval()
+
+setInterval and clearInterval work the same way that setTimeout and clearTimeout do, but instead of executing the callback once, setInterval executes the callback over and over again, until it is cleared. Here's an example:
+
+```js
+let result = {iterations: 0};
+const interval = setInterval(() => {
+  result.iterations += 1;
+});
+
+setTimeout(() => {
+  clearInterval(interval);
+}, 1000);
+
+//-> {iterations: 802}
+```
