@@ -45,27 +45,66 @@ function findUser(id) {
 findUser(2);
 ```
 
-If we throw an exception inside a then callback, the exception is automatically converted into a promise rejection. The thrown error becomes the rejection reason.
+Here's the full error as it appears in Chrome's console:
+
+```js
+Promise {<rejected>: Error: user does not exist
+    at findUser (<anonymous>:8:31)
+    at <anonymous>:14:1
+    }
+        [[Prototype]]: Promise
+            catch: ƒ catch()
+            constructor: ƒ Promise()
+            finally: ƒ finally()
+            then: ƒ then()
+            Symbol(Symbol.toStringTag): "Promise" 
+            [[Prototype]]: Object
+        [[PromiseState]]: "rejected"
+        [[PromiseResult]]: Error: user does not exist
+            at findUser (<anonymous>:8:31)
+            at <anonymous>:14:1message: "user does not exist"stack: "Error: user does not exist\n    at findUser (<anonymous>:8:31)\n    at <anonymous>:14:1"
+            [[Prototype]]: Object
+```
+
+**If we throw an exception inside a then callback, the exception is automatically converted into a promise rejection**. The thrown error becomes the rejection reason.
 
 The next example fails in the same way as the example above, but does it by throwing the error from a then.
-Promise.resolve()
-.then(() => {
-throw new Error('user does not exist');
-});
- Async Result:
-Asyncronous ResultThis result will wait up to 3000ms for a response from the code before returning.
 
-{rejected: 'Error: user does not exist'}
-Whether you use Promise.reject(new Error('user does not exist')) or Promise.resolve().then(()=>throw new Error('user does not exist') the result is the same.
+```js
+Promise.resolve()
+    .then(() => {
+        throw new Error('user does not exist');
+        }
+    );
+
+//-> {rejected: 'Error: user does not exist'}
+```
+
+Whether you use 
+
+```js
+Promise.reject(new Error('user does not exist')) 
+```
+
+or 
+
+```js
+Promise.resolve().then(()=>throw new Error('user does not exist'));
+```
+
+...the result is the same.
+
 Any then callbacks chained on the rejected promise will also reject with the same reason. Those then callbacks are never called.
-This mirrors how exceptions work in regular JavaScript code. When a line of code throws an exception, the following lines don't execute.
-Promise.resolve()
-.then(() => {
-throw new Error('oh no');
-}).then(() => {
-return 5;
-});
- Async Result:
-Asyncronous ResultThis result will wait up to 3000ms for a response from the code before returning.
 
-{rejected: 'Error: oh no'}
+This mirrors how exceptions work in regular JavaScript code. When a line of code throws an exception, the following lines don't execute.
+
+```js
+Promise.resolve()
+    .then(() => {
+        throw new Error('oh no');
+    })
+    .then(() => {
+        return 5;
+    });
+//-> {rejected: 'Error: oh no'}
+```
