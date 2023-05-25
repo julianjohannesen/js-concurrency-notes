@@ -35,6 +35,8 @@ Imagine that we have a system with two parts: an API server that returns JSON re
 
 Suppose that we accidentally add a bug: **suppose we return the promise itself, so the promise gets serialized into JSON. The client will see {}**, like in the example above. This is confusing, because it's not obvious that we accidentally returned a promise, rather than returning its value. You might think that the value itself is an empty object. Or you might think that you introduced a bug somewhere else in your code that resulted in an empty object.
 
+Here's another example of how returning a promise, rather than its value can create confusing bugs. In the example, bettyPromise will result in a fulfilled promise, however its value will not be accessible. **If we attempt to create a new object containing the the value in bettyPromise using Object.assign(), we'll end up with an empty object.**
+
 ```js
 const bettyPromise = Promise.resolve({name: 'Betty', city: 'Nassau'});
 Object.assign({}, bettyPromise);
